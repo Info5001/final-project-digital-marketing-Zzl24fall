@@ -51,7 +51,7 @@ public class SolutionOffer {
         if (products.size() == 0) {
             return "No products in the bundle";
         }
-        return products.get(0).getName() +" "+ marketChannelComb.getName();
+        return products.get(0).getName() +" - "+ marketChannelComb.getName();
     }
 
     public int getSalesVolume() {

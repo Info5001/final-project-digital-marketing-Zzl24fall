@@ -79,10 +79,10 @@ public class DigitalMarketingApplication {
 
 
         // Assign markets to channels
-        MarketChannelAssignment marketChannel1 = market1.getMarketChannelComb(channel1);
-        MarketChannelAssignment marketChannel2 = market2.getMarketChannelComb(channel2);
-        MarketChannelAssignment marketChannel3 = market3.getMarketChannelComb(channel3);
-        MarketChannelAssignment marketChannel4 = market3.getMarketChannelComb(channel4);
+        MarketChannelAssignment market1Channel1 = market1.getMarketChannelComb(channel1);
+        MarketChannelAssignment market2Channel2 = market2.getMarketChannelComb(channel2);
+        MarketChannelAssignment market3Channel3 = market3.getMarketChannelComb(channel3);
+        MarketChannelAssignment market3Channel4 = market3.getMarketChannelComb(channel4);
 
         // Create and assign Solution Offers
         SolutionOfferCatalog solutionOfferCatalog = new SolutionOfferCatalog(business);
@@ -94,10 +94,10 @@ public class DigitalMarketingApplication {
             Product product = new Product(productName, targetPrice, targetPrice - 10, targetPrice + 10);
 
             MarketChannelAssignment randomAssignment = switch (faker.number().numberBetween(1, 5)) {
-                case 1 -> marketChannel1;
-                case 2 -> marketChannel2;
-                case 3 -> marketChannel3;
-                default -> marketChannel4;
+                case 1 -> market1Channel1;
+                case 2 -> market2Channel2;
+                case 3 -> market3Channel3;
+                default -> market3Channel4;
             };
 
             SolutionOffer solutionOffer = solutionOfferCatalog.newBundle(randomAssignment, targetPrice, product);
@@ -105,13 +105,13 @@ public class DigitalMarketingApplication {
         }
 
         // Advertising Expense Breakdown
-        marketChannel1.setAdvertisingBudget(5000);
-        marketChannel2.setAdvertisingBudget(7000);
-        marketChannel3.setAdvertisingBudget(6000);
-        marketChannel4.setAdvertisingBudget(8000);
+        market1Channel1.setAdvertisingBudget(5000);
+        market2Channel2.setAdvertisingBudget(7000);
+        market3Channel3.setAdvertisingBudget(6000);
+        market3Channel4.setAdvertisingBudget(8000);
  
         // Generate Sales Orders
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 25; i++) {
           SolutionOffer randomBundle = solutionOfferCatalog.pickRandomBundle();
           if (randomBundle != null) {
               System.out.println("Generated Order for Bundle: " + randomBundle.getBundleName() +
