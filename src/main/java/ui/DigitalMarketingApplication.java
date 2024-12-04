@@ -59,65 +59,82 @@ public class DigitalMarketingApplication {
 
  
     // Part 1 - Create the business and load data
-      Business business = ConfigureABusiness.createABusinessAndLoadALotOfData("Amazon", 50, 30, 100, 200, 20);
+    Business business = ConfigureABusiness.createABusinessAndLoadALotOfData("Amazon", 50, 30, 100, 200, 20);
 
-        // Create Markets and Channels
-        Market market1 = new Market("Market 1");
-        Market market2 = new Market("Market 2");
-        Market market3 = new Market("Market 3");
+    // Create Markets
+    Market market1 = new Market("Market 1");
+    Market market2 = new Market("Market 2");
+    Market market3 = new Market("Market 3");
 
-        ChannelCatalog channelCatalog = new ChannelCatalog();
+    // Create ChannelCatalog and Channels
+    ChannelCatalog channelCatalog = new ChannelCatalog();
 
-        Channel channel1 = channelCatalog.addChannel();
-        channel1.setName("channel1");
-        Channel channel2 = channelCatalog.addChannel();
-        channel2.setName("channel2");
-        Channel channel3 = channelCatalog.addChannel();
-        channel3.setName("channel3");
-        Channel channel4 = channelCatalog.addChannel();
-        channel4.setName("channel4");
+    Channel channel1 = channelCatalog.addChannel();
+    channel1.setName("Channel 1");
+    Channel channel2 = channelCatalog.addChannel();
+    channel2.setName("Channel 2");
+    Channel channel3 = channelCatalog.addChannel();
+    channel3.setName("Channel 3");
+    Channel channel4 = channelCatalog.addChannel();
+    channel4.setName("Channel 4");
 
+    // Combine every Market with every Channel
+    MarketChannelAssignment[][] marketChannelAssignments = new MarketChannelAssignment[3][4];
+    Market[] markets = {market1, market2, market3};
+    Channel[] channels = {channel1, channel2, channel3, channel4};
 
-        // Assign markets to channels
-        MarketChannelAssignment market1Channel1 = market1.getMarketChannelComb(channel1);
-        MarketChannelAssignment market2Channel2 = market2.getMarketChannelComb(channel2);
-        MarketChannelAssignment market3Channel3 = market3.getMarketChannelComb(channel3);
-        MarketChannelAssignment market3Channel4 = market3.getMarketChannelComb(channel4);
-
-        // Create and assign Solution Offers
-        SolutionOfferCatalog solutionOfferCatalog = new SolutionOfferCatalog(business);
-        Faker faker = new Faker();
-
-        for (int i = 0; i < 30; i++) {
-            String productName = faker.commerce().productName();
-            int targetPrice = faker.number().numberBetween(20, 100);
-            Product product = new Product(productName, targetPrice, targetPrice - 10, targetPrice + 10);
-
-            MarketChannelAssignment randomAssignment = switch (faker.number().numberBetween(1, 5)) {
-                case 1 -> market1Channel1;
-                case 2 -> market2Channel2;
-                case 3 -> market3Channel3;
-                default -> market3Channel4;
-            };
-
-            SolutionOffer solutionOffer = solutionOfferCatalog.newBundle(randomAssignment, targetPrice, product);
-            System.out.println("Created Solution Offer: " + solutionOffer.getBundleName());
+    for (int i = 0; i < markets.length; i++) {
+        for (int j = 0; j < channels.length; j++) {
+            marketChannelAssignments[i][j] = markets[i].getMarketChannelComb(channels[j]);
         }
+    }
 
-        // Advertising Expense Breakdown
-        market1Channel1.setAdvertisingBudget(5000);
-        market2Channel2.setAdvertisingBudget(7000);
-        market3Channel3.setAdvertisingBudget(6000);
-        market3Channel4.setAdvertisingBudget(8000);
- 
-        // Generate Sales Orders
-        for (int i = 0; i < 25; i++) {
-          SolutionOffer randomBundle = solutionOfferCatalog.pickRandomBundle();
-          if (randomBundle != null) {
-              System.out.println("Generated Order for Bundle: " + randomBundle.getBundleName() +
-                      " | Target Price: $" + randomBundle.getTargetPrice());
-          }
-      }
+    // Create and assign Solution Offers
+    SolutionOfferCatalog solutionOfferCatalog = new SolutionOfferCatalog(business);
+    Faker faker = new Faker();
+
+    for (int i = 0; i < 30; i++) {
+        String productName = faker.commerce().productName();
+        int targetPrice = faker.number().numberBetween(20, 100);
+        Product product = new Product(productName, targetPrice, targetPrice - 10, targetPrice + 10);
+
+        // Randomly pick a Market-Channel Assignment
+        int randomMarketIndex = faker.number().numberBetween(0, markets.length);
+        int randomChannelIndex = faker.number().numberBetween(0, channels.length);
+        MarketChannelAssignment randomAssignment = marketChannelAssignments[randomMarketIndex][randomChannelIndex];
+
+        SolutionOffer solutionOffer = solutionOfferCatalog.newBundle(randomAssignment, targetPrice, product);
+        System.out.println("Created Solution Offer: " + solutionOffer.getBundleName());
+    }
+
+    // Advertising Expense Breakdown (assign budgets for every combination)
+    for (int i = 0; i < markets.length; i++) {
+        for (int j = 0; j < channels.length; j++) {
+            marketChannelAssignments[i][j].setAdvertisingBudget(faker.number().numberBetween(5000, 10000));
+        }
+    }
+
+    // Calculate advertising costs for a single market
+    int market1Costs = market2.calculateTotalAdvertisingCosts();
+    System.out.println("Market 3 Total Advertising Costs: " + market1Costs);
+        
+    // Calculate advertising costs for a single channel
+    int channel1Costs = channel2.calculateTotalAdvertisingCosts();
+    System.out.println("Channel 3 Total Advertising Costs: " + channel1Costs);
+    
+    // Calculate total advertising costs
+    int totalCosts = calculateTotalAdvertisingCostsForAll(markets, channels);
+    System.out.println("Total Advertising Costs for All Markets and Channels: " + totalCosts);
+
+    // Generate Sales Orders
+    for (int i = 0; i < 25; i++) {
+        SolutionOffer randomBundle = solutionOfferCatalog.pickRandomBundle();
+        if (randomBundle != null) {
+            System.out.println("Generated Order for Bundle: " + randomBundle.getBundleName() +
+                    " | Target Price: $" + randomBundle.getTargetPrice());
+        }
+    }
+
 
 
     /*
@@ -155,4 +172,19 @@ public class DigitalMarketingApplication {
 
 
   }
+
+  public static int calculateTotalAdvertisingCostsForAll(Market[] markets, Channel[] channels) {
+    int totalCost = 0;
+
+    for (Market market : markets) {
+        totalCost += market.calculateTotalAdvertisingCosts();
+    }
+
+    for (Channel channel : channels) {
+        totalCost += channel.calculateTotalAdvertisingCosts();
+    }
+
+    return totalCost;
+  }
+
 }

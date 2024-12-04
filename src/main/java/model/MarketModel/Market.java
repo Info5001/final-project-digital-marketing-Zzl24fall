@@ -29,6 +29,18 @@ public class Market {
         }
         MarketChannelAssignment newMca = new MarketChannelAssignment(this, c);
         marketChannelCombs.add(newMca);
+        c.addmarketChannelCombs(newMca);
         return newMca;
     }
+
+    public int calculateTotalAdvertisingCosts() {
+        int totalCost = 0;
+        if (marketChannelCombs != null) {
+            for (MarketChannelAssignment mca : marketChannelCombs) {
+                totalCost += mca.getAdvertisingBudget();
+            }
+        }
+        return totalCost;
+    }
+    
 }

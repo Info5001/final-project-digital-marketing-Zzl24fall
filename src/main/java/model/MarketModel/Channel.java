@@ -28,5 +28,18 @@ public class Channel {
     marketChannelCombinations = new ArrayList<MarketChannelAssignment>();
   }
 
+  public void addmarketChannelCombs(MarketChannelAssignment mca) {
+    marketChannelCombinations.add(mca);
+  }
+
+  public int calculateTotalAdvertisingCosts() {
+    int totalCost = 0;
+    if (marketChannelCombinations != null) {
+        for (MarketChannelAssignment mca : marketChannelCombinations) {
+            totalCost += mca.getAdvertisingBudget(); // 从 MarketChannelAssignment 获取广告成本
+        }
+    }
+    return totalCost;
+  }
 
 }
