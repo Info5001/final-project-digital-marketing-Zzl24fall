@@ -56,8 +56,7 @@ public class MarketChannelAssignment {
   }
 
   public String getName() {
-    // TODO Implement name for market - channel combinations
-    return "some market, some channel";
+    return market.characteristics.get(0) + " - " + channel.name;
   }
 
 }

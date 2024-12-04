@@ -5,12 +5,21 @@
  */
 package ui;
 
-import java.util.ArrayList;
+
+
+import java.util.Random;
 
 import com.github.javafaker.Faker;
 
 import model.Business.Business;
 import model.Business.ConfigureABusiness;
+import model.MarketModel.Channel;
+import model.MarketModel.ChannelCatalog;
+import model.MarketModel.Market;
+import model.MarketModel.MarketChannelAssignment;
+import model.ProductManagement.Product;
+import model.ProductManagement.SolutionOffer;
+import model.ProductManagement.SolutionOfferCatalog;
 
 /**
  *
@@ -46,7 +55,72 @@ public class DigitalMarketingApplication {
      * - Market
      * - Channel
      * - Price
-     * 
+     */
+
+ 
+    // Part 1 - Create the business and load data
+      Business business = ConfigureABusiness.createABusinessAndLoadALotOfData("Amazon", 50, 30, 100, 200, 20);
+
+        // Create Markets and Channels
+        Market market1 = new Market("Market 1");
+        Market market2 = new Market("Market 2");
+        Market market3 = new Market("Market 3");
+
+        ChannelCatalog channelCatalog = new ChannelCatalog();
+
+        Channel channel1 = channelCatalog.addChannel();
+        channel1.setName("channel1");
+        Channel channel2 = channelCatalog.addChannel();
+        channel2.setName("channel2");
+        Channel channel3 = channelCatalog.addChannel();
+        channel3.setName("channel3");
+        Channel channel4 = channelCatalog.addChannel();
+        channel4.setName("channel4");
+
+
+        // Assign markets to channels
+        MarketChannelAssignment marketChannel1 = market1.getMarketChannelComb(channel1);
+        MarketChannelAssignment marketChannel2 = market2.getMarketChannelComb(channel2);
+        MarketChannelAssignment marketChannel3 = market3.getMarketChannelComb(channel3);
+        MarketChannelAssignment marketChannel4 = market3.getMarketChannelComb(channel4);
+
+        // Create and assign Solution Offers
+        SolutionOfferCatalog solutionOfferCatalog = new SolutionOfferCatalog(business);
+        Faker faker = new Faker();
+
+        for (int i = 0; i < 30; i++) {
+            String productName = faker.commerce().productName();
+            int targetPrice = faker.number().numberBetween(20, 100);
+            Product product = new Product(productName, targetPrice, targetPrice - 10, targetPrice + 10);
+
+            MarketChannelAssignment randomAssignment = switch (faker.number().numberBetween(1, 5)) {
+                case 1 -> marketChannel1;
+                case 2 -> marketChannel2;
+                case 3 -> marketChannel3;
+                default -> marketChannel4;
+            };
+
+            SolutionOffer solutionOffer = solutionOfferCatalog.newBundle(randomAssignment, targetPrice, product);
+            System.out.println("Created Solution Offer: " + solutionOffer.getBundleName());
+        }
+
+        // Advertising Expense Breakdown
+        marketChannel1.setAdvertisingBudget(5000);
+        marketChannel2.setAdvertisingBudget(7000);
+        marketChannel3.setAdvertisingBudget(6000);
+        marketChannel4.setAdvertisingBudget(8000);
+ 
+        // Generate Sales Orders
+        for (int i = 0; i < 50; i++) {
+          SolutionOffer randomBundle = solutionOfferCatalog.pickRandomBundle();
+          if (randomBundle != null) {
+              System.out.println("Generated Order for Bundle: " + randomBundle.getBundleName() +
+                      " | Target Price: $" + randomBundle.getTargetPrice());
+          }
+      }
+
+
+    /*
      * ## Part 2 – Build reports
      * 
      * 1. Create Market profitability report. This report should show how same
@@ -78,9 +152,7 @@ public class DigitalMarketingApplication {
      * 4. Add any additional features you think will improve user experience
      */
 
-    Business business = ConfigureABusiness.createABusinessAndLoadALotOfData("Amazon", 50, 10, 30,
-        100,
-        10);
+
 
   }
 }

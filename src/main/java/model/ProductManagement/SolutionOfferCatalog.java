@@ -6,6 +6,8 @@
 package model.ProductManagement;
 
 import java.util.ArrayList;
+import java.util.Random;
+
 import model.Business.Business;
 import model.MarketModel.MarketChannelAssignment;
 
@@ -29,8 +31,12 @@ public class SolutionOfferCatalog {
     }
 
     public SolutionOffer pickRandomBundle() {
-        // TODO implement picking random bundle
-        return null;
+        if (solutionoffers == null || solutionoffers.isEmpty()) {
+            return null;
+        }
+        Random random = new Random();
+        int index = random.nextInt(solutionoffers.size());
+        return solutionoffers.get(index); 
     }
 
 }
